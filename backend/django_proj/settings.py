@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -18,6 +20,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+
+def bool_env(env, default='false'):
+    TRUE_VALUES = ('1', 'true')
+    
+    var = os.environ.get(env, default).lower()
+    return var in TRUE_VALUES
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-#djes(stnxu#09dz3z+8uka^6)hzf%_u#d7*yn!xq!55*yt&m)"
@@ -31,8 +40,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    
+    # your apps
     'example',
     
+    # 3rd-party apps
+    'django_vite',
+    
+    # django's built-in apps 
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -52,6 +67,16 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "django_proj.urls"
+
+FRONTEND_HMR = bool_env('FRONTEND_HMR')
+DJANGO_VITE = {
+    "default": {
+        "dev_mode": FRONTEND_HMR,
+        "dev_server_host": "localhost",
+        "dev_server_port": 5173,
+        "dev_server_protocol": "http",
+    }
+}
 
 TEMPLATES = [
     {
@@ -117,3 +142,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
